@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="교직원 연수용 24문항 자연 유형(해·숲·바위·물) 자기 이해 활동지">
+<title>교직원 자연 유형</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 구성: 잠금 → 시작 안내(네 가지 자연) → 장면 4단계 × 6문항 → 결과(풍경 구성·장면별 모습·에너지·어울림·모둠 대화) */
+:root{
+  --bg:#F5F4F0; --surface:#FFFFFF; --fg:#1F2328; --muted:#5C636B; --line:#DDDAD3; --ink:#262B31;
+  --sun:#A0461A; --sun-soft:#F8E6DA;
+  --forest:#2F7346; --forest-soft:#DDEEE2;
+  --rock:#5F5850; --rock-soft:#E9E5E0;
+  --water:#1F6687; --water-soft:#DCEBF3;
+  --focus:#1F6687; --danger:#B3261E;
+  --f-display:"Gowun Batang","Noto Serif KR",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151719; --surface:#1E2124; --fg:#E8E9EA; --muted:#A0A6AD; --line:#34383D; --ink:#E8E9EA;
+  --sun:#EE9A62; --sun-soft:#3B2618; --forest:#6CC08A; --forest-soft:#1C3325;
+  --rock:#BDB3A8; --rock-soft:#2E2B28; --water:#6BB6DA; --water-soft:#18303D;
+  --focus:#6BB6DA; --danger:#F2867E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151719; --surface:#1E2124; --fg:#E8E9EA; --muted:#A0A6AD; --line:#34383D; --ink:#E8E9EA;
+  --sun:#EE9A62; --sun-soft:#3B2618; --forest:#6CC08A; --forest-soft:#1C3325;
+  --rock:#BDB3A8; --rock-soft:#2E2B28; --water:#6BB6DA; --water-soft:#18303D;
+  --focus:#6BB6DA; --danger:#F2867E; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.65;margin:0}
+.wrap{max-width:780px;margin:0 auto;padding:36px 16px 80px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2rem} h2{font-size:1.45rem} h3{font-size:1.1rem}
+p{margin:0}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;color:var(--muted);font-weight:500}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.note{font-size:.86rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px}
+.ico{display:block;flex:none}
+
+/* 시작 안내 */
+.intro{display:flex;flex-direction:column;gap:22px}
+.intro .lead{color:var(--muted);max-width:60ch}
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:620px){.types{grid-template-columns:repeat(2,1fr)}}
+.type{border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px;background:var(--soft);min-width:0}
+.type b{font-family:var(--f-display);font-size:1.15rem;color:var(--c)}
+.type span{font-size:.84rem;color:var(--fg);line-height:1.5}
+.type .ico{color:var(--c)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;counter-reset:st}
+@media (max-width:620px){.steps{grid-template-columns:1fr}}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem;counter-increment:st;display:flex;gap:10px;min-width:0}
+.steps li::before{content:counter(st);font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* 문항 */
+.stepper{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;display:flex;flex-direction:column;gap:8px}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.chip{font-size:.78rem;text-align:center;padding:6px 4px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.cur{border-color:var(--ink);color:var(--fg);font-weight:700}
+.chip.done{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.meter{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{flex:1;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .25s}
+.scene-head{display:flex;flex-direction:column;gap:4px}
+ol.items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:110px}
+.item.done{box-shadow:inset 3px 0 0 var(--ink)}
+.q{font-weight:700;display:flex;gap:10px}
+.q span{color:var(--muted);font-variant-numeric:tabular-nums;min-width:2ch}
+.pair{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.opt{font-size:.95rem;color:var(--muted);min-width:0;transition:color .15s}
+.opt.b{text-align:right}
+.opt.on{color:var(--fg);font-weight:500}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{appearance:none;font:inherit;font-size:.78rem;border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--muted);padding:9px 0;width:54px;cursor:pointer}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
+.seg button:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+@media (max-width:600px){
+  .pair{grid-template-columns:1fr;gap:8px}
+  .opt.b{text-align:left;order:1}
+  .opt.a::before{content:"A  ";font-weight:700}
+  .opt.b::before{content:"B  ";font-weight:700}
+  .seg{order:0}
+  .seg button{flex:1;width:auto}
+}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.actions .grow{flex:1}
+.btn{appearance:none;font:inherit;font-weight:500;border-radius:9px;padding:10px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+/* 결과 */
+.result{display:flex;flex-direction:column;gap:22px}
+.banner{border-radius:14px;padding:24px;background:var(--soft);display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.banner .ico{color:var(--c)}
+.banner .tag{font-size:.8rem;font-weight:700;color:var(--c);letter-spacing:.04em}
+.banner h2{font-size:1.8rem;color:var(--fg)}
+.banner h2 em{font-style:normal;color:var(--c)}
+.banner p{max-width:52ch}
+@media (max-width:560px){.banner{grid-template-columns:1fr;gap:12px}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card ul,.card ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:5px}
+.axes{display:flex;flex-direction:column;gap:8px;font-size:.85rem;color:var(--muted)}
+.axis{display:grid;grid-template-columns:3.6em 1fr 3.6em;gap:8px;align-items:center}
+.axis .track{height:8px;background:var(--line);border-radius:4px;position:relative}
+.axis .track i{position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:var(--ink);transform:translateX(-50%)}
+.axis .r{text-align:right}
+.strip{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;background:var(--surface)}
+.strip i{display:block;min-width:0}
+.mix{display:flex;flex-direction:column;gap:8px}
+.mixrow{display:grid;grid-template-columns:22px 2.6em 1fr 3em;gap:10px;align-items:center;font-size:.92rem}
+.mixrow .ico{color:var(--c)}
+.mixrow b{font-weight:500}
+.mixrow.main b{font-weight:700;color:var(--c)}
+.mbar{height:8px;background:var(--soft);border-radius:4px;overflow:hidden}
+.mbar i{display:block;height:100%;background:var(--c);border-radius:4px}
+.mixrow span{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.quote{font-family:var(--f-display);font-size:1.15rem;line-height:1.5;border-left:4px solid var(--c);padding-left:14px}
+.scenes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.scenes{grid-template-columns:1fr}}
+.scene{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.scene .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.scene .h b{font-size:.92rem}
+.badge{font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--c);white-space:nowrap}
+.scene p{font-size:.93rem}
+.pairs{display:flex;flex-direction:column;gap:10px}
+.pairrow{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;align-items:start}
+.pairrow .ico{color:var(--c)}
+.pairrow b{display:block;margin-bottom:2px}
+.pairrow i{font-style:normal;color:var(--muted);font-size:.85rem;display:block;margin-bottom:4px}
+.pairrow p{font-size:.93rem}
+.copybox{width:100%;min-height:96px;font:inherit;font-size:.85rem;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.toast{font-size:.85rem;color:var(--forest)}
+footer{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{
+  body{background:#fff}
+  .noprint,.stepper,footer{display:none!important}
+  .card,.scene,.pairrow,.banner{break-inside:avoid}
+}
+/* 접속 잠금 화면 */
+html.locked .wrap{display:none}
+.gate{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;background:var(--bg);z-index:100}
+html.locked .gate{display:flex}
+.gate form{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 22px;display:flex;flex-direction:column;gap:14px}
+.gate h2{font-size:1.3rem}
+.gate p{margin:0;color:var(--muted);font-size:.93rem}
+.gate input{font:inherit;font-size:1.05rem;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);letter-spacing:.08em}
+.gate input:focus{outline:2px solid var(--focus);outline-offset:1px}
+.gate button{font:inherit;font-weight:700;padding:12px;border:0;border-radius:10px;background:var(--ink);color:var(--surface);cursor:pointer}
+.gate .err{color:var(--danger);font-size:.9rem;min-height:1.3em}
+</style>
+</head>
+<body>
+<script>/* 잠금 상태로 시작: 본문이 잠깐이라도 보이지 않도록 */
+(function(){var ok=false;try{ok=sessionStorage.getItem('staff-color-gate')==='1';}catch(e){}if(!ok)document.documentElement.classList.add('locked');})();
+</script>
+<div class="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <form id="gateForm" autocomplete="off">
+    <h2 id="gateTitle">교직원 자연 유형</h2>
+    <p>비밀번호를 입력하세요.</p>
+    <input id="gatePw" type="password" inputmode="numeric" aria-label="비밀번호" required>
+    <div class="err" id="gateErr" aria-live="polite"></div>
+    <button type="submit">들어가기</button>
+  </form>
+</div>
+<script>
+(function(){
+  /* 비밀번호 원문 대신 SHA-256 해시만 보관 */
+  var HASH='ada0943700ecc63e3c2fb655b38389ada8898da6a1655b62f36b105be2fc1564';
+  function sha256(str){
+    var bytes=unescape(encodeURIComponent(str)),i,j,K=[],H=[],p=2,n=0;
+    function isP(x){for(var d=2;d*d<=x;d++)if(x%d===0)return false;return true;}
+    while(n<64){if(isP(p)){if(n<8)H[n]=(Math.pow(p,1/2)*4294967296)|0;K[n++]=(Math.pow(p,1/3)*4294967296)|0;}p++;}
+    var l=bytes.length*8;bytes+='\x80';while(bytes.length%64!==56)bytes+='\x00';
+    var w=[];for(i=0;i<bytes.length;i++)w[i>>2]|=bytes.charCodeAt(i)<<((3-i%4)*8);
+    w.push((l/4294967296)|0);w.push(l|0);
+    function r(x,c){return (x>>>c)|(x<<(32-c));}
+    for(j=0;j<w.length;j+=16){
+      var W=w.slice(j,j+16),a=H.slice(0);
+      for(i=0;i<64;i++){
+        if(i>=16){var s0=r(W[i-15],7)^r(W[i-15],18)^(W[i-15]>>>3),s1=r(W[i-2],17)^r(W[i-2],19)^(W[i-2]>>>10);W[i]=(W[i-16]+s0+W[i-7]+s1)|0;}
+        var t1=(a[7]+(r(a[4],6)^r(a[4],11)^r(a[4],25))+((a[4]&a[5])^(~a[4]&a[6]))+K[i]+W[i])|0,
+            t2=((r(a[0],2)^r(a[0],13)^r(a[0],22))+((a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2])))|0;
+        a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.length=8;
+      }
+      for(i=0;i<8;i++)H[i]=(H[i]+a[i])|0;
+    }
+    var out='';for(i=0;i<8;i++)out+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return out;
+  }
+  var f=document.getElementById('gateForm'),pw=document.getElementById('gatePw'),err=document.getElementById('gateErr');
+  if(document.documentElement.classList.contains('locked'))setTimeout(function(){pw.focus();},0);
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(sha256(pw.value.trim())===HASH){
+      try{sessionStorage.setItem('staff-color-gate','1');}catch(x){}
+      document.documentElement.classList.remove('locked');err.textContent='';pw.value='';window.scrollTo(0,0);
+    }else{err.textContent='비밀번호가 맞지 않습니다.';pw.select();}
+  });
+})();
+</script>
+
+<div class="wrap">
+
+  <section id="intro" class="intro" aria-labelledby="t1">
+    <div class="eyebrow">교직원 연수 · 자기 이해 활동</div>
+    <h1 id="t1">교직원 자연 유형</h1>
+    <p class="lead">우리는 저마다 다른 방식으로 학교를 움직입니다. 네 개의 학교 장면에서 평소 나에게 더 가까운 문장을 고르면, 해·숲·바위·물 가운데 나와 닮은 자연을 찾아 줍니다.</p>
+    <div class="types" id="types"></div>
+    <ol class="steps">
+      <li><span>장면 4개, 모두 24문항입니다. 5분 정도 걸립니다.</span></li>
+      <li><span>두 문장 중 더 가까운 쪽을 ‘매우’ 또는 ‘조금’으로 고릅니다.</span></li>
+      <li><span>결과에서 장면별 내 모습과 동료와 어울리는 법을 봅니다.</span></li>
+    </ol>
+    <p class="note">정답은 없습니다. 되고 싶은 모습보다 <b>평소 학교에서 일할 때의 모습</b>을 떠올리세요. 응답은 이 기기 안에서만 계산되며 어디에도 전송되지 않습니다.</p>
+    <div class="actions">
+      <button class="btn primary" id="start">시작하기</button>
+      <button class="btn" id="resume" hidden></button>
+    </div>
+  </section>
+
+  <section id="quiz" hidden aria-label="문항">
+    <div class="stepper">
+      <div class="chips" id="chips"></div>
+      <div class="meter"><span id="count">0 / 24</span><div class="bar"><i id="barfill"></i></div></div>
+    </div>
+    <div class="scene-head" style="margin:8px 0 14px">
+      <div class="eyebrow" id="sceneNo"></div>
+      <h2 id="sceneName"></h2>
+      <p class="muted small" id="sceneDesc"></p>
+    </div>
+    <ol class="items" id="items"></ol>
+    <div class="actions" style="margin-top:18px">
+      <button class="btn" id="prev">← 이전 장면</button>
+      <span class="grow"></span>
+      <button class="btn primary" id="next" disabled></button>
+    </div>
+  </section>
+
+  <section id="result" class="result" hidden aria-live="polite"></section>
+
+  <footer>
+    <p>이 활동지는 ‘과제↔사람’, ‘외향↔신중’ 두 축으로 일하는 방식을 네 가지 자연에 빗대어 보는 학교 연수용 자체 제작 도구입니다. 문항과 해설은 모두 직접 작성했으며, 특정 상용 성격검사와 관계가 없습니다.</p>
+    <p>비상업적 교육 목적으로만 사용하며, 표준화나 타당도 검증을 거치지 않은 간이 도구입니다.</p>
+    <p>결과는 서로를 이해하기 위한 대화 소재로만 활용하고, 업무 배정이나 평가의 근거로 사용하지 마세요.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  /* ---------- 아이콘(단순 도형) ---------- */
+  function icon(k,size){
+    var s=size||28, body={
+      sun:'<circle cx="12" cy="12" r="4.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></g>',
+      forest:'<path d="M8 3 3 13h3l-2.5 5h9L10 13h3z" fill="currentColor"/><path d="M16.5 6 13 13h2l-2 4.5h8L19 13h2z" fill="currentColor" opacity=".7"/><path d="M8 18v3M17 17.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+      rock:'<path d="M2.5 19.5 5.5 11l5-4 5.5 2 3 4.5 2.5 6z" fill="currentColor"/><path d="M10.5 7 9 13l3.5 2" stroke="var(--surface)" stroke-width="1.3" fill="none" stroke-linejoin="round" opacity=".7"/>',
+      water:'<path d="M12 2.8s-6 7.1-6 11.1a6 6 0 0 0 12 0c0-4-6-11.1-6-11.1z" fill="currentColor"/><path d="M9.2 14.6a3 3 0 0 0 2.6 2.6" stroke="var(--surface)" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".8"/>'
+    }[k];
+    return '<svg class="ico" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" aria-hidden="true">'+body+'</svg>';
+  }
+
+  /* ---------- 장면과 문항 ----------
+     x: tp(+ 사람 지향 / - 과제 지향), ei(+ 외향·적극 / - 신중·숙고)
+     sA: 문장 A가 가리키는 극의 부호. 축마다 12문항, 방향 6:6 균형 */
+  var SCENES=[
+    {name:'회의와 협의', short:'회의', desc:'교직원 회의, 학년·부서 협의를 떠올려 보세요.'},
+    {name:'업무와 일 처리', short:'업무', desc:'맡은 업무를 계획하고 처리하는 평소 모습을 떠올려 보세요.'},
+    {name:'동료와 학부모', short:'관계', desc:'교무실 동료, 학부모와 주고받는 일상을 떠올려 보세요.'},
+    {name:'변화와 쉼', short:'변화', desc:'새로운 일, 불편한 상황, 쉬는 방식을 떠올려 보세요.'}
+  ];
+  var ITEMS=[
+    {x:'tp',sA:-1,q:'안건 자료를 받으면',a:'해야 할 일과 마감부터 표시한다',b:'이 일로 부담을 느낄 사람이 있는지 살핀다'},
+    {x:'ei',sA:1,q:'회의 중 생각이 떠오르면',a:'정리되지 않았어도 일단 꺼내 본다',b:'생각이 정리될 때까지 조금 기다린다'},
+    {x:'tp',sA:1,q:'회의가 잘 됐다고 느낄 때는',a:'모두가 편하게 말하고 마음이 모였을 때',b:'정할 것을 빠짐없이 정했을 때'},
+    {x:'ei',sA:-1,q:'의견이 부딪히면',a:'회의가 끝난 뒤 따로 전하거나 글로 정리한다',b:'그 자리에서 내 생각을 분명히 말한다'},
+    {x:'tp',sA:-1,q:'업무분장 협의에서 먼저 보는 것은',a:'업무량과 효율이 합리적인지',b:'선생님들이 서로 납득할 수 있는지'},
+    {x:'ei',sA:1,q:'협의회 진행을 맡게 되면',a:'앞에서 이끄는 역할이 편하다',b:'뒤에서 준비하고 돕는 역할이 편하다'},
+
+    {x:'tp',sA:1,q:'일을 맡을 때 더 신경 쓰이는 것은',a:'같이 일할 사람과 잘 맞을지',b:'일의 범위와 기준이 분명한지'},
+    {x:'ei',sA:-1,q:'새 업무를 시작할 때',a:'계획표부터 만든다',b:'손을 먼저 대면서 방향을 잡는다'},
+    {x:'tp',sA:-1,q:'판단이 애매할 때 먼저 찾는 것은',a:'규정, 지침, 지난 사례',b:'관련된 사람들의 사정과 입장'},
+    {x:'ei',sA:1,q:'일이 몰리는 날에는',a:'여러 일을 오가며 빠르게 처리한다',b:'하나씩 끝내며 차례로 처리한다'},
+    {x:'tp',sA:1,q:'보람이 큰 날은',a:'누군가에게 도움이 되었다고 느낀 날',b:'계획한 일을 깔끔하게 끝낸 날'},
+    {x:'ei',sA:-1,q:'결정을 내릴 때',a:'자료를 충분히 살핀 뒤 정한다',b:'빨리 정하고 필요하면 고친다'},
+
+    {x:'tp',sA:-1,q:'동료의 실수를 알게 되면',a:'어떻게 바로잡을지부터 이야기한다',b:'당황했을 마음부터 살핀다'},
+    {x:'ei',sA:1,q:'새 학년 첫 모임에서',a:'먼저 다가가 말을 건다',b:'누가 말을 걸어 오면 반갑게 받는다'},
+    {x:'tp',sA:1,q:'학부모 상담 전화에서 먼저 하는 일은',a:'속상한 마음을 충분히 들어 주는 것',b:'사실관계와 처리 절차를 확인하는 것'},
+    {x:'ei',sA:-1,q:'내 기분이나 생각은',a:'겉으로 잘 드러나지 않는다',b:'표정과 말투에 금방 드러난다'},
+    {x:'tp',sA:-1,q:'업무 메신저를 쓸 때',a:'용건만 간단히 쓴다',b:'인사와 안부를 먼저 쓴다'},
+    {x:'ei',sA:1,q:'동료에게 도움을 청할 때',a:'바로 찾아가 말로 부탁한다',b:'메신저로 정리해서 부탁한다'},
+
+    {x:'tp',sA:1,q:'교무실에 불편한 기류가 흐를 때',a:'서로 마음을 푸는 자리를 먼저 생각한다',b:'무엇이 문제인지 원인부터 짚는다'},
+    {x:'ei',sA:-1,q:'새 제도가 도입된다는 소식을 들으면',a:'영향과 문제점부터 따져 본다',b:'일단 해 보면서 익히자고 생각한다'},
+    {x:'tp',sA:-1,q:'연수 주제를 고른다면',a:'업무 효율화, 에듀테크, 행정 실무',b:'관계, 상담, 학교 공동체'},
+    {x:'ei',sA:1,q:'지친 한 주를 보내고 나면',a:'사람들과 어울리며 힘을 얻는다',b:'혼자 조용히 쉬며 힘을 얻는다'},
+    {x:'tp',sA:1,q:'교무실에서 가장 바라는 것은',a:'서로 챙기고 편하게 지내는 분위기',b:'각자 할 일이 분명하고 효율적인 분위기'},
+    {x:'ei',sA:-1,q:'계획이 갑자기 바뀌면',a:'이유와 대안을 차분히 확인하고 싶다',b:'바로 새 계획에 맞춰 움직인다'}
+  ];
+  var N=ITEMS.length, PER=6, PAGES=SCENES.length, MAX=24; // 축마다 12문항 × 최대 2점
+  var VALS=[-2,-1,1,2]; // 음수 = A쪽
+  var KEY='staff-nature-answers-v1';
+  try{localStorage.removeItem('staff-color-answers-v1');}catch(e){}
+  var ans=new Array(N).fill(null);
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(saved)&&saved.length===N) ans=saved;}catch(e){}
+  function store(){try{localStorage.setItem(KEY,JSON.stringify(ans));}catch(e){}}
+
+  /* ---------- 네 가지 자연 ---------- */
+  var T={
+    sun:{name:'해',title:'앞장서 길을 여는 사람',brief:'과제 · 외향',
+      line:'해가 떠야 하루가 시작되듯, 일이 멈춰 있을 때 먼저 움직여 흐름을 만듭니다.',
+      scene:['결론이 나지 않는 논의를 정리하고 “그럼 이렇게 합시다” 하고 매듭짓습니다.',
+             '우선순위를 빠르게 정하고, 행사·시설·안전처럼 실행이 중요한 일에서 힘을 냅니다.',
+             '솔직하고 시원하게 말합니다. 돌려 말하기보다 문제를 바로 짚습니다.',
+             '새 제도나 계획을 먼저 시도해 보며 다른 사람이 따라올 길을 틉니다.'],
+      up:['목표와 권한이 분명하게 주어질 때','애쓴 결과가 눈에 보일 때','회의가 빠르게 결정으로 이어질 때'],
+      down:['말이 짧아지고 지시하는 말투가 늘어난다','다른 사람을 기다리지 못하고 혼자 처리한다','절차를 건너뛰고 싶어진다'],
+      ask:'결론과 기한부터 말해 주세요. 이유는 짧아도 괜찮습니다.',
+      care:'속도가 다른 동료에게는 한 번 더 설명할 시간을 두세요. 함께 도착해야 멀리 갑니다.'},
+    forest:{name:'숲',title:'함께 어우러지게 하는 사람',brief:'사람 · 외향',
+      line:'숲이 여러 생명을 품듯, 사람을 잇고 분위기를 살려 모두가 함께 가게 합니다.',
+      scene:['조용한 사람에게도 말할 기회를 권하고, 분위기가 굳으면 먼저 풀어냅니다.',
+             '여러 사람이 함께하는 행사, 연수, 학부모 소통에서 특히 빛납니다.',
+             '동료의 기분 변화를 먼저 알아채고, 먼저 말을 건넵니다.',
+             '새 계획에 사람들이 마음을 모으도록 설득하고 북돋웁니다.'],
+      up:['여럿이 함께 일할 때','수고를 말로 알아봐 줄 때','지시보다 대화로 풀어 갈 때'],
+      down:['말이 많아지거나 감정이 앞선다','소외되었다고 느끼기 쉽다','세부 일정과 마감을 놓친다'],
+      ask:'인사와 안부로 시작하고, 수고를 말로 알아봐 주세요.',
+      care:'모두를 만족시키려다 결정이 늦어질 수 있습니다. 기한을 먼저 함께 정해 두세요.'},
+    rock:{name:'바위',title:'흔들림 없이 받치는 사람',brief:'과제 · 신중',
+      line:'바위가 물길을 잡아 주듯, 절차와 기준으로 학교 일이 흔들리지 않게 받칩니다.',
+      scene:['근거와 자료를 확인하고, 빠진 절차나 놓친 조건을 짚어 냅니다.',
+             '예산, 공문, 성적, 기록처럼 정확해야 하는 일을 믿고 맡길 수 있습니다.',
+             '말수는 적어도 한 약속은 꼭 지킵니다.',
+             '새 제도의 영향과 위험을 먼저 따져 빈틈을 막습니다.'],
+      up:['기준과 일정이 미리 정해져 있을 때','준비할 시간이 충분할 때','꼼꼼함과 정확성을 인정받을 때'],
+      down:['규정을 더 엄격하게 붙든다','변화에 말없이 버틴다','다른 사람의 실수를 참기 어렵다'],
+      ask:'근거를 갖춰 미리 알려 주세요. 갑작스러운 변경은 이유와 함께 알려 주세요.',
+      care:'완벽을 기다리다 때를 놓치지 않도록, ‘이 정도면 충분하다’는 기준을 함께 정해 두세요.'},
+    water:{name:'물',title:'깊이 살피고 새 길을 찾는 사람',brief:'사람 · 신중',
+      line:'물이 막힌 곳을 돌아 새 길을 찾듯, 깊이 생각하며 사람과 일의 의미를 함께 살핍니다.',
+      scene:['끝까지 듣고 나서, 다른 사람이 놓친 관점이나 대안을 조용히 내놓습니다.',
+             '교육과정 재구성, 프로젝트 수업처럼 새로 설계하는 일에 깊이 몰입합니다.',
+             '학생과 동료 한 사람 한 사람의 사정을 세심하게 헤아립니다.',
+             '왜 바꾸는지 납득되면 누구보다 깊이 받아들이고 의미를 더합니다.'],
+      up:['생각할 시간과 자율이 있을 때','일의 취지를 함께 나눌 때','여럿 앞보다 1:1로 이야기할 때'],
+      down:['결정을 미루며 혼자 오래 고민한다','서운해도 드러내지 않고 물러선다','마감과 세부 사항을 놓친다'],
+      ask:'취지부터 나누고, 생각할 시간을 주세요.',
+      care:'떠오른 생각을 완성하기 전에 한 번 나눠 보세요. 도움을 더 빨리 받을 수 있습니다.'}
+  };
+  var ORDER=['sun','forest','rock','water'];
+  /* 두 자연의 어울림 (키는 ORDER 순서) */
+  var PAIRS={
+    'sun-forest':{m:'햇빛이 숲을 키웁니다',t:'둘 다 적극적이라 일이 빠르게 굴러갑니다. 해는 결정하기 전에 숲이 들은 사람들의 이야기를 한 번 묻고, 숲은 해에게 기한과 목표를 먼저 확인하세요.'},
+    'sun-rock':{m:'해가 바위를 데웁니다',t:'둘 다 일을 중심에 두어 손발이 잘 맞지만 속도가 다릅니다. 해는 시작 전에 바위에게 확인할 절차를 묻고, 바위는 꼭 필요한 검토만 골라 알려 주세요.'},
+    'sun-water':{m:'햇빛이 물에 비칩니다',t:'서로 정반대 자리에 있어 오해가 생기기 쉽지만, 함께하면 가장 멀리 봅니다. 해는 물에게 생각할 시간을 미리 주고, 물은 생각을 해에게 결론부터 전하세요.'},
+    'forest-rock':{m:'숲은 바위틈에서도 자랍니다',t:'서로 정반대 자리입니다. 숲은 바위가 딱딱하다고, 바위는 숲이 느슨하다고 느끼기 쉽습니다. 숲은 정한 기한과 형식을 지키고, 바위는 기준을 말할 때 이유와 배려 한마디를 더하세요.'},
+    'forest-water':{m:'숲은 물을 머금습니다',t:'둘 다 사람을 먼저 생각해 마음이 잘 통합니다. 숲은 물이 말할 틈을 만들어 주고, 물은 숲에게 생각을 조금 더 일찍 꺼내 보세요.'},
+    'rock-water':{m:'물은 바위를 돌아 흐릅니다',t:'둘 다 신중하지만 바위는 기준을, 물은 의미를 봅니다. 바위는 새 아이디어를 거절하기 전에 취지를 묻고, 물은 아이디어를 일정과 절차로 풀어 바위에게 보여 주세요.'}
+  };
+  function pairOf(a,b){ return PAIRS[ORDER.indexOf(a)<ORDER.indexOf(b)? a+'-'+b : b+'-'+a]; }
+  function typeOf(x,y){ return y>=0 ? (x<0?'sun':'forest') : (x<0?'rock':'water'); }
+  function cvars(k){ return '--c:var(--'+k+');--soft:var(--'+k+'-soft)'; }
+  function lvl(v,max){ var a=Math.abs(v)/max; return a>=.58?'뚜렷함':a>=.25?'보통':'약함'; }
+
+  /* ---------- 시작 화면 ---------- */
+  document.getElementById('types').innerHTML=['sun','water','forest','rock'].map(function(k){
+    return '<div class="type" style="'+cvars(k)+'">'+icon(k,30)+'<b>'+T[k].name+'</b><span>'+T[k].title+'</span></div>';
+  }).join('');
+  var views={intro:document.getElementById('intro'),quiz:document.getElementById('quiz'),result:document.getElementById('result')};
+  function show(v){ Object.keys(views).forEach(function(k){views[k].hidden=(k!==v);}); window.scrollTo(0,0); }
+  function answered(){ return ans.filter(function(v){return v!==null;}).length; }
+  function firstOpenPage(){ for(var i=0;i<N;i++) if(ans[i]===null) return Math.floor(i/PER); return PAGES-1; }
+  function initIntro(){
+    var n=answered(), r=document.getElementById('resume'), st=document.getElementById('start');
+    if(n>0){ r.hidden=false; r.textContent='이어서 하기 ('+n+' / '+N+')'; st.textContent='처음부터 시작'; st.classList.remove('primary'); r.classList.add('primary'); }
+    else { r.hidden=true; st.textContent='시작하기'; st.classList.add('primary'); r.classList.remove('primary'); }
+  }
+  document.getElementById('start').onclick=function(){ if(answered()>0){ans=new Array(N).fill(null);store();} page=0; drawPage(); show('quiz'); };
+  document.getElementById('resume').onclick=function(){ page=firstOpenPage(); drawPage(); show('quiz'); };
+
+  /* ---------- 문항 화면 ---------- */
+  var page=0, list=document.getElementById('items');
+  var LABELS=[['A 매우','A에 매우 가깝다'],['A 조금','A에 조금 가깝다'],['B 조금','B에 조금 가깝다'],['B 매우','B에 매우 가깝다']];
+  function drawPage(){
+    var sc=SCENES[page];
+    document.getElementById('sceneNo').textContent='장면 '+(page+1)+' / '+PAGES;
+    document.getElementById('sceneName').textContent=sc.name;
+    document.getElementById('sceneDesc').textContent=sc.desc;
+    var html='';
+    for(var i=page*PER;i<(page+1)*PER;i++){
+      var it=ITEMS[i];
+      html+='<li class="item" id="item-'+i+'"><div class="q"><span>'+(i+1)+'</span>'+it.q+'</div>'+
+        '<div class="pair"><div class="opt a">'+it.a+'</div><div class="seg" role="group" aria-label="'+(i+1)+'번 응답">'+
+        LABELS.map(function(l,k){return '<button type="button" aria-label="'+l[1]+'" aria-pressed="false" data-i="'+i+'" data-k="'+k+'">'+l[0]+'</button>';}).join('')+
+        '</div><div class="opt b">'+it.b+'</div></div></li>';
+    }
+    list.innerHTML=html; paint();
+  }
+  function pageDone(p){ for(var i=p*PER;i<(p+1)*PER;i++) if(ans[i]===null) return false; return true; }
+  function paint(){
+    for(var i=page*PER;i<(page+1)*PER;i++){
+      var li=document.getElementById('item-'+i), v=ans[i];
+      li.classList.toggle('done',v!==null);
+      li.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.k===v));});
+      li.querySelector('.opt.a').classList.toggle('on',v===0||v===1);
+      li.querySelector('.opt.b').classList.toggle('on',v===2||v===3);
+    }
+    var n=answered();
+    document.getElementById('count').textContent=n+' / '+N;
+    document.getElementById('barfill').style.width=(n/N*100)+'%';
+    document.getElementById('chips').innerHTML=SCENES.map(function(s,p){
+      return '<div class="chip'+(p===page?' cur':pageDone(p)?' done':'')+'" title="'+s.name+'">'+(p+1)+' '+s.short+'</div>';}).join('');
+    var left=0; for(var j=page*PER;j<(page+1)*PER;j++) if(ans[j]===null) left++;
+    var nx=document.getElementById('next'), last=page===PAGES-1;
+    nx.disabled = left>0 || (last && n<N);
+    nx.textContent = left>0 ? (last?'결과 보기':'다음 장면')+' ('+left+'문항 남음)' : (last?'결과 보기':'다음 장면 →');
+    document.getElementById('prev').style.visibility = page===0?'hidden':'visible';
+  }
+  list.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-i]'); if(!b) return;
+    var i=+b.dataset.i, first=ans[i]===null;
+    ans[i]=+b.dataset.k; store(); paint();
+    if(first){ for(var j=i+1;j<(page+1)*PER;j++) if(ans[j]===null){ document.getElementById('item-'+j).scrollIntoView({behavior:'smooth',block:'center'}); break; } }
+  });
+  document.getElementById('prev').onclick=function(){ if(page>0){page--;drawPage();window.scrollTo(0,0);} };
+  document.getElementById('next').onclick=function(){
+    if(page<PAGES-1){page++;drawPage();window.scrollTo(0,0);} else if(answered()===N){ render(); }
+  };
+
+  /* ---------- 채점 ---------- */
+  function score(from,to){
+    var x=0,y=0;
+    for(var i=from;i<to;i++){ var it=ITEMS[i], c=-VALS[ans[i]]*it.sA; if(it.x==='tp') x+=c; else y+=c; }
+    return {x:x,y:y};
+  }
+
+  /* ---------- 풍경 구성: 네 자연의 비율 ----------
+     과제 쪽 비율 a, 외향 쪽 비율 e(각 0.1~0.9, 한쪽 끝이어도 반대편이 0이 되지 않게)를 곱해 네 몫을 만든다(합 = 1). */
+  function shares(x,y){
+    var a=.5-.4*(x/MAX), e=.5+.4*(y/MAX);
+    var raw={sun:a*e, forest:(1-a)*e, rock:a*(1-e), water:(1-a)*(1-e)};
+    // 최대 나머지 방식으로 정수 %를 만들어 합계를 100으로 맞춤
+    var ks=Object.keys(raw), pct={}, used=0;
+    ks.forEach(function(k){pct[k]=Math.floor(raw[k]*100); used+=pct[k];});
+    ks.slice().sort(function(p,q){return (raw[q]*100-pct[q])-(raw[p]*100-pct[p]);}).slice(0,100-used).forEach(function(k){pct[k]++;});
+    return pct;
+  }
+  function mixHTML(x,y,key){
+    var pct=shares(x,y);
+    var ks=ORDER.slice().sort(function(p,q){ return p===key?-1:q===key?1:pct[q]-pct[p]; });
+    var strip='<div class="strip" role="img" aria-label="풍경 구성: '+ks.map(function(k){return T[k].name+' '+pct[k]+'%';}).join(', ')+'">'+
+      ks.map(function(k){ return pct[k]>0?'<i style="flex:'+pct[k]+' 1 0;background:var(--'+k+')"></i>':''; }).join('')+'</div>';
+    var rows=ks.map(function(k){
+      return '<div class="mixrow'+(k===key?' main':'')+'" style="'+cvars(k)+'">'+icon(k,22)+'<b>'+T[k].name+'</b>'+
+        '<div class="mbar"><i style="width:'+pct[k]+'%"></i></div><span>'+pct[k]+'%</span></div>';
+    }).join('');
+    return strip+'<div class="mix">'+rows+'</div>';
+  }
+  function axisRow(l,r,v){ var pct=50+(v/MAX)*50; return '<div class="axis"><span>'+l+'</span><div class="track"><i style="left:'+pct+'%"></i></div><span class="r">'+r+'</span></div>'; }
+  var ul=function(a,tag){tag=tag||'ul';return '<'+tag+'>'+a.map(function(t){return '<li>'+t+'</li>';}).join('')+'</'+tag+'>';};
+
+  /* ---------- 결과 ---------- */
+  function render(){
+    var s=score(0,N), key=typeOf(s.x,s.y), t=T[key];
+    var near=key;
+    if(Math.min(Math.abs(s.x),Math.abs(s.y))<=4){
+      near = Math.abs(s.x)<=Math.abs(s.y) ? typeOf(s.x<0?1:-1,s.y) : typeOf(s.x,s.y>=0?-1:1);
+    }
+    var tpText=(s.x<0?'과제 쪽 ':'사람 쪽 ')+lvl(s.x,MAX), eiText=(s.y>=0?'외향 쪽 ':'신중 쪽 ')+lvl(s.y,MAX);
+    var blend = near!==key ? '<p class="note">한 축이 가운데에 가까워 <b style="color:var(--'+near+')">'+T[near].name+'</b>의 모습도 함께 지니고 있습니다.</p>' : '';
+
+    var scenes=SCENES.map(function(sc,p){
+      var ss=score(p*PER,(p+1)*PER), badge='';
+      if(ss.x!==0 && ss.y!==0){ var sk=typeOf(ss.x,ss.y);
+        if(sk!==key) badge='<span class="badge" style="'+cvars(sk)+'">이 장면에선 '+T[sk].name+'에 가까움</span>'; }
+      return '<div class="scene"><div class="h"><b>'+(p+1)+'. '+sc.name+'</b>'+badge+'</div><p>'+t.scene[p]+'</p></div>';
+    }).join('');
+
+    var pairs=ORDER.filter(function(k){return k!==key;}).map(function(k){ var pr=pairOf(key,k);
+      return '<div class="pairrow" style="'+cvars(k)+'">'+icon(k,26)+'<div><b>'+T[k].name+' 동료와 함께</b><i>'+pr.m+'</i><p>'+pr.t+'</p></div></div>';
+    }).join('');
+
+    var pc=shares(s.x,s.y), summary='나의 자연: '+t.name+' ('+t.title+')\n풍경 구성: '+ORDER.map(function(k){return T[k].name+' '+pc[k]+'%';}).join(', ')+'\n'+tpText+' / '+eiText+'\n'+
+      '나와 일할 때: '+t.ask+'\n힘이 나는 때: '+t.up.join(', ');
+
+    views.result.innerHTML=
+      '<div class="banner" style="'+cvars(key)+'">'+icon(key,72)+
+        '<div style="display:flex;flex-direction:column;gap:8px;min-width:0"><div class="tag">나의 자연 유형</div>'+
+        '<h2><em>'+t.name+'</em> · '+t.title+'</h2><p>'+t.line+'</p></div></div>'+
+
+      '<div class="grid2">'+
+        '<div class="card"><h3>나의 풍경 구성</h3><p class="small muted">한 사람 안에도 네 자연이 모두 있습니다. 응답에서 드러난 비율입니다.</p>'+mixHTML(s.x,s.y,key)+
+          '<div class="axes" style="margin-top:4px">'+axisRow('과제','사람',s.x)+axisRow('신중','외향',s.y)+'</div>'+
+          '<p class="small muted">'+tpText+' · '+eiText+'</p>'+blend+'</div>'+
+        '<div class="card" style="'+cvars(key)+'"><h3>나와 일할 때 한 문장</h3><p class="quote">'+t.ask+'</p>'+
+          '<h3 style="margin-top:6px">내가 기억할 한 가지</h3><p>'+t.care+'</p></div>'+
+      '</div>'+
+
+      '<section style="display:flex;flex-direction:column;gap:12px"><h3>장면별로 본 나</h3><div class="scenes">'+scenes+'</div>'+
+        '<p class="small muted">배지는 그 장면의 응답만 따로 모았을 때 다른 자연에 가까웠다는 표시입니다. 상황에 따라 모습이 달라지는 것은 자연스러운 일입니다.</p></section>'+
+
+      '<div class="grid2">'+
+        '<div class="card"><h3>힘이 채워질 때</h3>'+ul(t.up)+'</div>'+
+        '<div class="card"><h3>힘이 바닥날 때 보이는 모습</h3>'+ul(t.down)+'<p class="small muted">이런 모습이 보이면 왼쪽의 조건이 채워지고 있는지 먼저 살펴보세요.</p></div>'+
+      '</div>'+
+
+      '<section class="pairs"><h3>다른 자연과 어울리기</h3>'+pairs+'</section>'+
+
+      '<div class="card"><h3>모둠 대화</h3>'+
+        ul(['결과 가운데 “맞다” 싶은 것 하나, “아니다” 싶은 것 하나를 골라 이야기해 보세요.',
+            '최근 학교에서 힘이 났던 순간은 ‘힘이 채워질 때’의 어느 항목과 닮았나요?',
+            '우리 모둠에 가장 적은 자연은 무엇인가요? 그 자연의 눈으로 보면 우리가 놓치는 것은 무엇일까요?'],'ol')+
+        '<p class="small muted">모둠에 공유할 때 아래 요약을 복사해 쓰세요.</p>'+
+        '<textarea class="copybox" id="copytext" readonly>'+summary+'</textarea>'+
+        '<div class="actions noprint"><button class="btn" id="copybtn">요약 복사</button><span class="toast" id="toast" hidden>복사했습니다</span></div></div>'+
+
+      '<div class="actions noprint"><button class="btn" id="back">응답 수정하기</button><button class="btn" id="print">인쇄 · PDF 저장</button><span class="grow"></span><button class="btn" id="again">다른 사람이 새로 하기</button></div>';
+    show('result');
+    document.getElementById('copybtn').onclick=function(){
+      var ta=document.getElementById('copytext'), toast=document.getElementById('toast');
+      var ok=function(){toast.hidden=false;setTimeout(function(){toast.hidden=true;},1800);};
+      try{navigator.clipboard.writeText(ta.value).then(ok,function(){ta.select();});}catch(e){ta.select();}
+    };
+    document.getElementById('back').onclick=function(){ page=0; drawPage(); show('quiz'); };
+    document.getElementById('print').onclick=function(){ window.print(); };
+    document.getElementById('again').onclick=function(){ ans=new Array(N).fill(null); store(); initIntro(); show('intro'); };
+  }
+
+  initIntro();
+})();
+</script>
+
+</body>
+</html>
